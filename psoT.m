@@ -1,8 +1,8 @@
-function t = psoT(IR_3)% Initialize the PSO with your parameters and search space
+function t = psoT(IR_3, tau)% Initialize the PSO with your parameters and search space
 % Chọn các thông số của thuật toán PSO
 num_particles = 50; % Số lượng hạt trong bầy
 num_iterations = 1000; % Số lần lặp
-tau = (0:4.6414e-12:14999*4.6414e-12)';
+
 % Chọn không gian tìm kiếm cho tau
 search_space_min = 1e-8; % Giá trị tối thiểu của tau
 search_space_max = 6e-8; % Giá trị tối đa của tau
@@ -39,11 +39,15 @@ for iteration = 1:num_iterations
 
     personal_best_objectives(update_indices) = objectives(update_indices);
     [max_personal_best, max_index] = max(personal_best_objectives);
+    test_max_personal_best(iteration) = global_best_objective;
     if max_personal_best > global_best_objective
         global_best_objective = max_personal_best;
         global_best_position = personal_best_positions(max_index);
     end
 end
+figure;
+title('Sự hội tụ của global_best_objective');
+plot(test_max_personal_best);
 objective_value = global_best_objective;
 t = global_best_position;
 end

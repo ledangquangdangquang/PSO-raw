@@ -9,20 +9,6 @@ function [s, ds, dds] = generatePulse(md, tau_0, tau, normalize)
 % 2: normalize to unit energy (discrete time)
 % 3: normalize to unit energy (continuous time, acc. to tau vector)
 % Note: use rcos_win.m for frequency domain RC pulse generation
-%
-% Example:
-%
-% md.type = 'RRC';
-% md.Tp = 1e-9;
-% md.beta = 0.6;
-% tau = (-5*md.Tp:1e-12:5*md.Tp)';
-% tau_0 = 1.23456e-12;
-% [s, ds, dds] = generatePulse(md, tau_0, tau, 0);
-% figure; plot(tau, s); figure; plot(tau, ds); figure; plot(tau, dds);
-
-
-% Paul Meissner, Dec. 2012, update Feb. 2016 Stefan Hinteregger
-
 %% Initialize and preliminaries
 if( ~(strcmp(md.type, 'RC') || strcmp(md.type, 'RRC')) )
     error('Only RC and RRC pulse supported!')
@@ -158,10 +144,7 @@ if(nargin > 3)
     if nargout >2
         dds = dds./normFactor;
     end
-
+ s = s.';
 end
-
-%% compute
-
 
 

@@ -1,4 +1,4 @@
-function global_best_position = psoV(u, IR_3, omega_1, omega_2, tau)
+function global_best_position = psoV(u, IR_3, omega_1, theta_1, tau)
 % Initialize the PSO with your parameters and search space
 rng(5);
 % Chon cac thong so cua thuat toan PSO
@@ -14,7 +14,7 @@ particle_positions = search_space_min + rand(num_particles, 1) .* (search_space_
 personal_best_positions = particle_positions;
 personal_best_objectives = zeros(num_particles, 1);
 for i = 1:num_particles
-    personal_best_objectives(i) = objective_function_v(u, personal_best_positions(i), IR_3, omega_1, omega_2, tau);
+    personal_best_objectives(i) = objective_function_v(u, personal_best_positions(i), IR_3, omega_1, theta_1, tau);
 end
 % Khoi tao Vi tri tot nhat Toan cau va Gia tri muc tieu
 [global_best_objective, global_best_index] = max(personal_best_objectives);
@@ -43,7 +43,7 @@ for iteration = 1:num_iterations
     particle_positions = max(min(particle_positions, search_space_max), search_space_min);
     % Danh gia ham muc tieu cho tung hat
     for i = 1 : num_particles
-        objective_value_v = objective_function_v(u, particle_positions(i), IR_3, omega_1, omega_2, tau);
+        objective_value_v = objective_function_v(u, particle_positions(i), IR_3, omega_1, theta_1, tau);
         objectives(i) = objective_value_v;
     end
 
