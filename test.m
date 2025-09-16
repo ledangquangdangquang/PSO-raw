@@ -1,33 +1,17 @@
-clc; clear; close all;
+tau = (0:4.6414e-12:14999*4.6414e-12); 
+ai = 1.626231880088694e-08;
+md.type = 'RRC'; 
+md.Tp = 0.5e-9; 
+md.beta = 0.6; 
 
-% --- Tham số ---
-Nbits = 6;      % số bit truyền
-sps   = 8;      % số mẫu trên mỗi symbol (oversampling)
-span  = 6;      % filter span (độ dài bộ lọc tính theo symbol)
-alpha = 0.5;    % roll-off factor
+u0 = generatePulse(md, ai, tau, 0);
+u1 = generatePulse(md, ai, tau, 1);
+u2 = generatePulse(md, ai, tau, 2);
+u3 = generatePulse(md, ai, tau, 3);
 
-% --- Tạo dãy bit ngẫu nhiên ---
-bits = randi([0 1], 1, Nbits);
-symbols = 2*bits - 1;   % BPSK: 0 -> -1, 1 -> +1
-
-% --- Tín hiệu xung vuông (chưa lọc) ---
-upsampled = upsample(symbols, sps);
-
-% --- Bộ lọc Raised Cosine ---
-rcFilter = rcosdesign(alpha, span, sps, 'normal');
-
-% --- Tín hiệu sau RC filter ---
-signal_rc = conv(upsampled, rcFilter, 'same');
-
-% --- Vẽ kết quả ---
-t = (0:length(upsampled)-1)/sps;
-
-figure;
-plot(t, upsampled, 'k--', 'LineWidth', 1); hold on;
-plot(t, signal_rc, 'b', 'LineWidth', 2);
-stem((0:Nbits-1), symbols, 'r', 'filled', 'LineWidth', 1.5);
-grid on;
-xlabel('Time (symbols)');
-ylabel('Amplitude');
-legend('Xung vuông (chưa lọc)','Sau RC filter','Symbols gốc');
-title('So sánh tín hiệu trước và sau bộ lọc RC');
+hold on;
+% plot(tau, u0);
+% plot(tau, u1);
+plot(tau, u2);
+% plot(tau, u3);
+% legend('u0', 'u1', 'u2', 'u3');

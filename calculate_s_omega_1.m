@@ -4,8 +4,8 @@ function s = calculate_s_omega_1(u, omega_1, theta_1, alpha, v)
     
     % ---Log--- 
     disp('--- s calculator ---');
-    fprintf("alpha = %.2f + %.2fi\n", real(alpha), imag(alpha));
-    fprintf("exp(j2piv) = %.2f + %.2fi\n", real(exp(1j*2*pi*v)), imag(exp(1j*2*pi*v)));
+    fprintf("alpha = %.10f + %.10fi\n", real(alpha), imag(alpha));
+    fprintf("exp(j2piv) = %.5f + %.5fi\n", real(exp(1j*2*pi*v)), imag(exp(1j*2*pi*v)));
     fprintf("Max u: %f\n", max(u));
     fprintf("Max c: %f\n", max(c));
 end

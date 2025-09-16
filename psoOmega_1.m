@@ -50,6 +50,7 @@ for iteration = 1:num_iterations
     personal_best_objectives(update_indices) = objectives(update_indices);
     % Cập nhật vị trí tốt nhất toàn cục
     [max_personal_best, max_index] = max(personal_best_objectives);
+   
     if max_personal_best > global_best_objective
         global_best_objective = max_personal_best;
         global_best_position = personal_best_positions(max_index, :);
@@ -57,6 +58,7 @@ for iteration = 1:num_iterations
 
 
 end
+
 theta_1 = global_best_position(1);
 phi_1 = global_best_position(2);
 omega_1 = [cos(global_best_position(1)) * sin(global_best_position(2)), sin(global_best_position(1)) * sin(global_best_position(2))];

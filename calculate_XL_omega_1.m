@@ -14,19 +14,19 @@ for i = 1:M
 end
 sgtitle(sprintf('IR_{12} and s for {%d} antennas', M));
 %% Log Full anten IR12 and IR3 (IR12 is IR3 previous)
-figure;
-for i = 1:M
-    subplot(ceil(M/2), 2, i);
-    plot(tau1, real(IR_12(i, :))); hold on;
-    plot(tau1, real(XL(i, :)), '--');
-    legend({'IR_{12}', 'IR_3'});
-    title(sprintf('anten {%d}: IR_{12} and IR_3', i));
-end
-hold off;
-sgtitle(sprintf('IR_{12} and IR_3 for {%d} antennas', M));
+% figure;
+% for i = 1:M
+%     subplot(ceil(M/2), 2, i);
+%     plot(tau1, real(IR_12(i, :))); hold on;
+%     plot(tau1, real(XL(i, :)), '--');
+%     legend({'IR_{12}', 'IR_3'});
+%     title(sprintf('anten {%d}: IR_{12} and IR_3', i));
+% end
+% hold off;
+% sgtitle(sprintf('IR_{12} and IR_3 for {%d} antennas', M));
 %% Log Full s in one 
-figure;
-for i = 1:M
-    plot(tau1, real(s(i, :))); hold on;
-end
+% figure;
+% for i = 1:M
+%     plot(tau1, real(s(i, :))); hold on;
+% end
 end

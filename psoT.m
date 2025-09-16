@@ -39,15 +39,11 @@ for iteration = 1:num_iterations
 
     personal_best_objectives(update_indices) = objectives(update_indices);
     [max_personal_best, max_index] = max(personal_best_objectives);
-    test_max_personal_best(iteration) = global_best_objective;
+   
     if max_personal_best > global_best_objective
         global_best_objective = max_personal_best;
         global_best_position = personal_best_positions(max_index);
     end
 end
-figure;
-title('Sự hội tụ của global_best_objective');
-plot(test_max_personal_best);
-objective_value = global_best_objective;
 t = global_best_position;
 end

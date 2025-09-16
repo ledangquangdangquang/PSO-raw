@@ -77,5 +77,4 @@ for iteration = 1:num_iterations
         break;
     end
 end
-objective_value = global_best_objective;
 end

@@ -1,15 +1,5 @@
 function [s, ds, dds] = generatePulse(md, tau_0, tau, normalize)
-%function s = generatePulse(md, tau_0, tau, normalize)
-%
-% Generates a pulse (RC, RRC) specified by md at position tau_0.
-%The pulse is defined over the vector tau;
-% Also generates the analytical derivatives (First and Second order).
-%normalize is optional:
-% 1: normalize to unit maximum amplitude
-% 2: normalize to unit energy (discrete time)
-% 3: normalize to unit energy (continuous time, acc. to tau vector)
-% Note: use rcos_win.m for frequency domain RC pulse generation
-%% Initialize and preliminaries
+
 if( ~(strcmp(md.type, 'RC') || strcmp(md.type, 'RRC')) )
     error('Only RC and RRC pulse supported!')
 end
@@ -144,7 +134,9 @@ if(nargin > 3)
     if nargout >2
         dds = dds./normFactor;
     end
- s = s.';
+
+end
+s = s.';
 end
 
 

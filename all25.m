@@ -8,7 +8,7 @@ md.type = 'RRC';
 md.Tp = 0.5e-9; 
 md.beta = 0.6; 
 M = 5; % Number of antennas
-load('pos.mat');
+load('pos.mat', 'pos_centers')
 IR_12_receiver = IR_12(:, 1:M).';
 IR_3 = IR_12_receiver; 
 IR_4 = IR_12_receiver; 
@@ -18,17 +18,16 @@ for i = 1:25
     A(i, 1) = psoT(IR_3, tau);
     fprintf("tau: %f\n", A(i, 1));
 
-    u = generatePulse(md, A(i, 1), tau, 0);
+    % u = generatePulse(md, A(i, 1), tau, 0);
+    u = generatePulse(md, A(i, 1), tau, 2);
     fprintf("Power u: %f\n", calculate_power(u));
     fprintf("Max u: %f\n", max(u));
     
     [A(i, 2), A(i, 3), B(i, :)] = psoOmega_1(u, IR_3, tau);
-    fprintf("phi_1: %f\ntheta_1: %f\n", A(i, 2), A(i, 3));
-
-    % [A(i, 4), A(i, 5), C(i, :)] = psoOmega_2(u, IR_4, tau);
-    % fprintf("phi_2: %f\ntheta_2: %f\n", A(i, 4), A(i, 5));
+    fprintf("phi_1: %f (%f)\ntheta_1: %f (%f)\n", A(i, 2), A(i, 2)*180/pi, A(i, 3), A(i, 3)*180/pi);
 
     A(i, 6) = psoV(u, IR_3, B(i, :), A(i, 3), tau);
+    % A(i, 6) =0;
     fprintf("doppler: %f\n", A(i, 6));
 
     A(i, 7) = alpha_1(u, IR_3, B(i, :), C(i, :), A(i, 3), A(i, 5), A(i, 6), tau);
@@ -36,5 +35,4 @@ for i = 1:25
     fprintf("abs(alpha): %f\n", abs(A(i, 7)));
 
     IR_3 = calculate_XL_omega_1(u, IR_3, B(i, :), A(i, 3), A(i, 7), A(i, 6));
-    % IR_4 = calculate_XL_omega_2(u, IR_4, C(i, :), A(i, 5), A(i, 7), A(i, 6));
 end
