@@ -1,66 +1,66 @@
 # PSO-raw (MATLAB)
 
-A MATLAB implementation of a parameter estimation pipeline using Particle Swarm Optimization (PSO) for a multi-antenna system. The workflow estimates pulse delay, direction parameters, Doppler, and complex amplitude iteratively, updating the residual after each step.
+Triển khai bằng MATLAB một quy trình ước lượng tham số dùng Particle Swarm Optimization (PSO) cho hệ thống nhiều anten. Quy trình ước lượng tuần tự độ trễ xung, tham số hướng, Doppler và biên độ phức; sau mỗi bước sẽ cập nhật tín hiệu dư (residual).
 
-### Prerequisites
-- MATLAB R2020a or newer (Signal Processing Toolbox recommended)
-- OS: Windows/Linux/macOS
-- Repository contents placed in a single folder (this folder)
+### Yêu cầu
+- MATLAB R2020a hoặc mới hơn (khuyến nghị có Signal Processing Toolbox)
+- Hệ điều hành: Windows/Linux/macOS
+- Mọi tệp của kho mã nằm cùng một thư mục (thư mục này)
 
-### Data files
-- `IR_12.mat`: Measured/received impulse responses per antenna (matrix). The script uses the first `M` columns.
-- `VA.mat`: Additional data used by the project (loaded in `all25.m`).
-- `pos.mat`: Contains `pos_centers` used to compute array responses.
+### Tệp dữ liệu
+- `IR_12.mat`: Phản hồi xung theo anten (ma trận). Script sử dụng `M` cột đầu.
+- `VA.mat`: Dữ liệu bổ sung được nạp trong `all25.m`.
+- `pos.mat`: Chứa `pos_centers` dùng để tính đáp ứng mảng anten.
 
-Make sure these files are present in the project root.
+Hãy đảm bảo các tệp này có trong thư mục gốc của dự án.
 
-### Main workflow
-Run `all25.m`. It performs 25 sequential estimation steps:
-1. Load `IR_12.mat`, `VA.mat`, and `pos.mat`. Set global params: number of antennas `M=5`, pulse model `md` (type RRC, `Tp`, `beta`), and time grid `tau`.
-2. For each step (1..25):
-   - Estimate delay `tau_0` via PSO: `psoT(IR_3, tau)`.
-   - Generate normalized pulse `u = generatePulse(md, tau_0, tau, 2)` and log its power.
-   - Estimate direction parameters via PSO: `[phi_1, theta_1, omega_1] = psoOmega_1(u, IR_3, tau)`.
-   - Estimate Doppler `v` via PSO: `psoV(u, IR_3, omega_1, theta_1, tau)`.
-   - Estimate complex amplitude `alpha` by closed-form scaling: `alpha_1(...)`.
-   - Update residual channel: `IR_3 = calculate_XL_omega_1(u, IR_3, omega_1, theta_1, alpha, v)`.
+### Quy trình chính
+Chạy `all25.m`. Script thực hiện 25 bước ước lượng nối tiếp:
+1. Nạp `IR_12.mat`, `VA.mat`, `pos.mat`. Thiết lập biến toàn cục: số anten `M=5`, mô hình xung `md` (kiểu RRC, `Tp`, `beta`) và lưới thời gian `tau`.
+2. Cho mỗi bước (1..25):
+   - Ước lượng độ trễ `tau_0` bằng PSO: `psoT(IR_3, tau)`.
+   - Tạo xung chuẩn hoá `u = generatePulse(md, tau_0, tau, 2)` và in công suất.
+   - Ước lượng tham số hướng bằng PSO: `[phi_1, theta_1, omega_1] = psoOmega_1(u, IR_3, tau)`.
+   - Ước lượng Doppler `v` bằng PSO: `psoV(u, IR_3, omega_1, theta_1, tau)`.
+   - Ước lượng biên độ phức `alpha` (tỷ lệ đóng dạng): `alpha_1(...)`.
+   - Cập nhật kênh dư: `IR_3 = calculate_XL_omega_1(u, IR_3, omega_1, theta_1, alpha, v)`.
 
-Intermediate results are printed to the console. `calculate_XL_omega_1` also plots per-antenna signals and the modeled component for inspection.
+Kết quả trung gian được in ra cửa sổ lệnh. `calculate_XL_omega_1` cũng vẽ tín hiệu theo từng anten và thành phần mô hình để kiểm tra.
 
-### Quick start
-1. Open MATLAB and set the current folder to this project directory.
-2. Ensure `IR_12.mat`, `VA.mat`, and `pos.mat` exist here.
-3. Run:
+### Bắt đầu nhanh
+1. Mở MATLAB và đặt thư mục làm việc hiện tại tới thư mục dự án này.
+2. Đảm bảo có các tệp `IR_12.mat`, `VA.mat`, `pos.mat` trong đây.
+3. Chạy:
    ```matlab
    all25
    ```
 
-### Key scripts and functions
-- `all25.m`: Orchestrates the 25-step estimation loop and logging.
-- `psoT.m`: PSO to estimate delay `tau_0` maximizing `objective_function_tau`.
-- `psoOmega_1.m`: PSO to estimate angles `[phi_1, theta_1]` and unit vector `omega_1` maximizing `objective_function_omega_1`.
-- `psoV.m`: PSO to estimate Doppler `v` maximizing `objective_function_v`.
-- `alpha_1.m`: Computes complex amplitude scaling using pulse power and array response.
-- `calculate_XL_omega_1.m`: Builds modeled signal for the estimated parameters and computes residual `IR_12 - s`; generates diagnostic plots.
-- `generatePulse.m`: Generates RC/RRC pulse and its derivatives; supports several normalization modes (0: none, 1: max, 2: energy, 3: energy with `tau`).
-- `objective_function_tau.m`: Correlates `u(md, tau_0)` with `IR_3` across antennas and sums energies.
-- `objective_function_omega_1.m`: Uses array response `calculate_c_omega_1` to form matched filter and maximizes squared magnitude of the integral.
-- `objective_function_v.m`: Adds Doppler term `exp(-j 2π v τ)` to matched filtering and maximizes magnitude.
-- `calculate_c_omega_1.m`: Builds array response vector `c(ω, θ)` from `pos_centers` for antennas indexed 11..20.
-- `calculate_power.m`: Average power of a signal vector.
-- `sigEnergy.m`: Signal energy (optionally weighted by `tau` step).
-- `test.m`: Example script to visualize generated pulses and normalization options.
+### Script và hàm chính
+- `all25.m`: Điều phối vòng lặp 25 bước ước lượng và ghi log.
+- `psoT.m`: PSO ước lượng độ trễ `tau_0` bằng cách cực đại `objective_function_tau`.
+- `psoOmega_1.m`: PSO ước lượng góc `[phi_1, theta_1]` và véc-tơ đơn vị `omega_1`, cực đại `objective_function_omega_1`.
+- `psoV.m`: PSO ước lượng Doppler `v`, cực đại `objective_function_v`.
+- `alpha_1.m`: Tính hệ số biên độ phức dựa trên công suất xung và đáp ứng mảng.
+- `calculate_XL_omega_1.m`: Xây dựng tín hiệu mô hình với tham số ước lượng và tính residual `IR_12 - s`; đồng thời vẽ đồ thị chẩn đoán.
+- `generatePulse.m`: Tạo xung RC/RRC và đạo hàm; hỗ trợ các chế độ chuẩn hoá (0: không, 1: theo đỉnh, 2: theo năng lượng, 3: theo năng lượng có `tau`).
+- `objective_function_tau.m`: Tương quan `u(md, tau_0)` với `IR_3` qua các anten và cộng năng lượng.
+- `objective_function_omega_1.m`: Dùng đáp ứng mảng `calculate_c_omega_1` tạo bộ lọc phù hợp và cực đại bình phương độ lớn tích phân.
+- `objective_function_v.m`: Thêm nhân tử Doppler `exp(-j 2π v τ)` vào bộ lọc phù hợp và cực đại độ lớn.
+- `calculate_c_omega_1.m`: Tạo véc-tơ đáp ứng mảng `c(ω, θ)` từ `pos_centers` cho các anten chỉ số 11..20.
+- `calculate_power.m`: Công suất trung bình của một tín hiệu.
+- `sigEnergy.m`: Năng lượng tín hiệu (tuỳ chọn có trọng số theo bước `tau`).
+- `test.m`: Ví dụ trực quan hoá xung sinh ra và các chế độ chuẩn hoá.
 
-### Globals and parameters
-- Globals used: `md` (pulse model structure), `M` (number of antennas), `pos_centers` (array geometry).
-- Default values in `all25.m`: `M = 5`, `md.type = 'RRC'`, `md.Tp = 0.5e-9`, `md.beta = 0.6`.
-- Time grid: `tau = 0 : 4.6414e-12 : 14999*4.6414e-12` (length 15000).
+### Biến toàn cục và tham số
+- Biến toàn cục sử dụng: `md` (cấu trúc mô hình xung), `M` (số anten), `pos_centers` (hình học mảng anten).
+- Giá trị mặc định trong `all25.m`: `M = 5`, `md.type = 'RRC'`, `md.Tp = 0.5e-9`, `md.beta = 0.6`.
+- Lưới thời gian: `tau = 0 : 4.6414e-12 : 14999*4.6414e-12` (độ dài 15000).
 
-### Notes and tips
-- Random seeds: `psoOmega_1` uses `rng(0)`, `psoV` uses `rng(5)` for reproducibility.
-- Plot windows may open during `calculate_XL_omega_1`. Close them or disable plotting by editing that function if running headless.
-- If you change `M` or `pos_centers`, update `calculate_c_omega_1` (antenna indices `11:20`) accordingly.
+### Ghi chú và mẹo
+- Seed ngẫu nhiên: `psoOmega_1` dùng `rng(0)`, `psoV` dùng `rng(5)` để tái lập.
+- Khi chạy `calculate_XL_omega_1` có thể mở cửa sổ đồ thị. Đóng chúng hoặc chỉnh sửa hàm để tắt vẽ nếu chạy headless.
+- Nếu thay `M` hoặc `pos_centers`, cần cập nhật `calculate_c_omega_1` (chỉ số anten `11:20`) cho phù hợp.
 
-### Citing or extending
-- This code can be extended to multi-component extraction by repeating the loop and/or modeling additional paths (`omega_2`, `theta_2`, etc.).
-- For research use, please cite your adapted method accordingly.
+### Mở rộng và trích dẫn
+- Có thể mở rộng để trích xuất đa thành phần bằng cách lặp lại vòng và/hoặc mô hình thêm các đường truyền (`omega_2`, `theta_2`, ...).
+- Khi dùng cho mục đích nghiên cứu, vui lòng trích dẫn phương pháp bạn đã điều chỉnh tương ứng.
