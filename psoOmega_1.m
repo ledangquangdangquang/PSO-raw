@@ -50,11 +50,13 @@ for iteration = 1:num_iterations
     personal_best_objectives(update_indices) = objectives(update_indices);
     % Cập nhật vị trí tốt nhất toàn cục
     [max_personal_best, max_index] = max(personal_best_objectives);
-   
+    % test_global_best_position(iteration) = global_best_objective;
+
     if max_personal_best > global_best_objective
         global_best_objective = max_personal_best;
         global_best_position = personal_best_positions(max_index, :);
     end
+    % plot(test_global_best_position);
 
 
 end
