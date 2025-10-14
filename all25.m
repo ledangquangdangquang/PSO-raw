@@ -1,38 +1,37 @@
-clc;clear;load('IR_12.mat');load('VA.mat');
-A = zeros(25, 7);%tau, phi_1, theta_1, phi_2, theta_2, doppler, alpha 
-B = zeros(25, 2);%omega_1 
-C = zeros(25, 2);%omega_2 
-global md M pos_centers;
-tau = (0:4.6414e-12:14999*4.6414e-12); 
-md.type = 'RRC'; 
-md.Tp   = 0.5e-9; 
-md.beta = 0.6; 
-M = 5; % Number of antennas
-load('pos.mat', 'pos_centers')
-IR_12_receiver = IR_12(:, 1:M).';
-IR_3           = IR_12_receiver; 
-IR_4           = IR_12_receiver; 
-
-for i = 1:25 
+clc;clear;load('IR_12.mat');load('VA.mat');load('ir12.mat');
+global  pos_centers md M ;
+% load('pos.mat', 'pos_centers')
+pos_centers = [0:0.025:(0.025*9); zeros(1,numel( 0:0.025:(0.025*9)))];
+md.type = 'RRC';
+md.Tp   = 0.5e-9;
+md.beta = 0.6;
+M       = 10;         % Number of antennas
+paths   = 5;          % Number of paths
+N       = 15000;      % Number of sample
+Ts      = 4.6414e-12; % Sampling period
+tau     = (0:N-1)*Ts;
+% IR_12_rx = IR_12(:, 1:M).';
+IR_12_rx= y;
+IR_3    = IR_12_rx;
+IR_4    = IR_12_rx;
+A       = zeros(paths, 7);  %tau, phi_1, theta_1, phi_2, theta_2, doppler, alpha
+B       = zeros(paths, 2);  %omega_1
+C       = zeros(paths, 2);  %omega_2
+for i = 1:paths
     fprintf("----- Step %d -----\n", i);
     A(i, 1) = psoT(IR_3, tau);
-    fprintf("tau: %f\n", A(i, 1));
-
-     u = generatePulse(md, A(i, 1), tau, 0);
-    % u = generatePulse(md, A(i, 1), tau, 2);
-    fprintf("Power u: %f\n", calculate_power(u));
-    fprintf("Max u: %f\n", max(u));
-    
-    [A(i, 2), A(i, 3), B(i, :)] = psoOmega_1(u, IR_3, tau);
-    fprintf("phi_1: %f (%f độ)\ntheta_1: %f (%f độ)\n", A(i, 2), A(i, 2)*180/pi, A(i, 3), A(i, 3)*180/pi);
-
+    u = generatePulse(md, A(i, 1), tau, 0);
+    [A(i, 2), A(i, 3), B(i, :)] = psoOmega_1(u, IR_3, tau); % Theta     Phi     Omega
     A(i, 6) = psoV(u, IR_3, B(i, :), A(i, 3), tau);
-    % A(i, 6) = 0;
-    fprintf("doppler: %f\n", A(i, 6));
-
     A(i, 7) = alpha_1(u, IR_3, B(i, :), A(i, 3), A(i, 6), tau);
-    fprintf("alpha: %.2f + %.2fi\n", real(A(i, 7)), imag(A(i, 7)));
-    fprintf("abs(alpha): %f\n", abs(A(i, 7)));
-
     IR_3 = calculate_XL_omega_1(u, IR_3, B(i, :), A(i, 3), A(i, 7), A(i, 6));
+
+    %% -------------LOG-------------
+    fprintf("tau    : %e\n", A(i, 1));
+    fprintf("Power u: %f\n", calculate_power(u));
+    fprintf("Max |u|: %f\n", max(u));
+    fprintf("phi_1  : %f (%f độ)\ntheta_1: %f (%f độ)\n", A(i, 2), A(i, 2)*180/pi, A(i, 3), A(i, 3)*180/pi);
+    fprintf("doppler: %f\n", A(i, 6));
+    fprintf("alpha  : %.2f + %.2fi\n", real(A(i, 7)), imag(A(i, 7)));
+    fprintf("|alpha|: %f\n", abs(A(i, 7)));
 end

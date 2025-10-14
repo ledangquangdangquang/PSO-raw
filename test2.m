@@ -1,0 +1,91 @@
+clc; clear; close all;
+
+% ================== THÔNG SỐ XUNG ==================
+md.type = 'RRC';
+md.Tp   = 0.5e-9;      % độ rộng xung (0.5 ns)
+md.beta = 0.6;         % hệ số roll-off
+
+N  = 15000;            % tổng số mẫu quan sát
+Ts = 4.6414e-12;       % chu kỳ lấy mẫu (s)
+tau = (0:N-1)*Ts;      % trục thời gian cố định
+
+% ================== CẤU TRÚC BURST ==================
+K  = 1;                 % số symbol trong 1 burst
+Tp = 2e-9;              % khoảng giữa 2 symbol
+% a_k = [1 -1 1 1 -1];    % chuỗi hệ số PN/BPSK
+a_k = [1];
+T_a = K * Tp;           % chu kỳ lặp lại của 1 burst
+num_burst = 1;          % số burst lặp lại trong cửa sổ tau
+
+% ================== XÂY DỰNG p(t) ==================
+p_t = generatePulse(md, 0, tau, 0);  % xung RRC cơ sở
+
+% ================== XÂY DỰNG a(t) (1 burst) ==================
+a_t = zeros(size(tau));
+for k = 0:K-1
+    tau_delay = k * Tp;
+    p_shift = generatePulse(md, tau_delay, tau, 0);
+    a_t = a_t + a_k(k+1) * p_shift;
+end
+
+% ================== XÂY DỰNG u(t): 5 burst lặp lại ==================
+u_t = zeros(size(tau));
+for i = 0:num_burst-1
+    tau_shift = i * T_a;
+    a_shift = zeros(size(tau));
+    for k = 0:K-1
+        tau_delay = tau_shift + k * Tp;
+        p_shift = generatePulse(md, tau_delay, tau, 0);
+        a_shift = a_shift + a_k(k+1) * p_shift;
+    end
+    u_t = u_t + a_shift;
+end
+
+% ================== CẤU HÌNH MẢNG ANTEN 2D ==================
+global M pos_centers;
+M = 10;                           % 10 anten thu
+d = 0.025;                        % khoảng cách 0.025 m = 2.5 cm
+pos_centers = [0:d:(d*(M-1));     % toạ độ x
+               zeros(1,M)];       % toạ độ y (phẳng 2D)
+
+% ================== THÔNG SỐ KÊNH ==================
+phi   = 45 * pi/180;              % góc phương vị
+theta = 90 * pi/180;              % 2D, mặt phẳng ngang
+alpha = 20 - 20.5j;               % biên độ phức
+v     = 0;                      % Doppler (Hz)
+
+% ====== VECTOR HƯỚNG SÓNG OMEGA_0 (2D) ======
+omega_0 = [cos(phi), sin(phi)];   % vì 2D, bỏ trục z
+
+% ====== TÍNH VECTOR HƯỚNG c(phi) ======
+c = calculate_c_omega_2D(omega_0);  % dùng hàm 2D mới
+
+% ====== TÍNH s(t) – CÓ DOPPLER THEO THỜI GIAN ======
+s = c * (alpha .* exp(1j*2*pi*v*tau)) .* u_t;   % (M×N)
+
+% ================== VẼ KẾT QUẢ ==================
+figure;
+
+subplot(4,1,1);
+plot(tau, p_t, 'LineWidth', 1.2);
+title('p(t) – Xung RRC cơ sở');
+xlabel('Time (s)'); ylabel('Amplitude'); grid on; xlim([0 max(tau)]);
+
+subplot(4,1,2);
+plot(tau, a_t, 'LineWidth', 1.2);
+title('a(t) – Một burst gồm K symbol');
+xlabel('Time (s)'); ylabel('Amplitude'); grid on; xlim([0 max(tau)]);
+
+subplot(4,1,3);
+plot(tau, u_t, 'LineWidth', 1.2);
+title('u(t) – Tín hiệu phát gồm nhiều burst lặp lại');
+xlabel('Time (s)'); ylabel('Amplitude'); grid on; xlim([0 max(tau)]);
+
+subplot(4,1,4);
+plot(tau, real(s(1,:)), 'b','LineWidth',1.1); hold on;
+plot(tau, real(s(2,:)), 'r--','LineWidth',1.1);
+title('s_1(t) và s_2(t) – Hai anten đầu tiên');
+xlabel('Time (s)'); ylabel('Re\{s(t)\}'); grid on; xlim([0 max(tau)]);
+legend('Anten 1','Anten 2');
+
+disp(['Kích thước s = ', num2str(size(s,1)), ' x ', num2str(size(s,2))]);
