@@ -1,15 +1,16 @@
 clc; clear;
 load('IR_12.mat'); load('VA.mat'); load('pos.mat');
-
+load('pos_gridpoint_corridor');
 hold on;
 title('Điểm thu phát');
 grid on;
 
 % Vẽ điểm phát
-VAtmp = used_VAs{1,1}(:,1);
-VAtmp(1,1) = -used_VAs{1,1}(1,1);
-plot(VAtmp(1,1), used_VAs{1,1}(2,1), 'ro', 'MarkerSize', 6, 'MarkerFaceColor','r');
-
+% VAtmp = used_VAs{1,1}(:,1);
+% VAtmp(1,1) = -used_VAs{1,1}(1,1);
+% plot(VAtmp(1,1), used_VAs{1,1}(2,1), 'ro', 'MarkerSize', 6, 'MarkerFaceColor','r');
+plot(4.18, 3.99, 'ro', 'MarkerSize', 6, 'MarkerFaceColor','r');
+pos_centers = pos;
 % Vẽ gốc tọa độ
 plot(0, 0, 'co', 'MarkerSize', 6, 'MarkerFaceColor','c');
 

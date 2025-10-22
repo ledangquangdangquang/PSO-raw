@@ -1,17 +1,21 @@
-clc;clear;load('IR_12.mat');load('VA.mat');load('ir12.mat');
-global  pos_centers md M ;
+clc;clear;load('IR_12.mat');load('VA.mat');load('ir12.mat');load('pos_gridpoint_corridor');load('RL_grid_corridor');
+global  md M pos_centers ;
 % load('pos.mat', 'pos_centers')
-pos_centers = [0:0.025:(0.025*9); zeros(1,numel( 0:0.025:(0.025*9)))];
+% pos_centers = [0:0.025:(0.025*9); zeros(1,numel( 0:0.025:(0.025*9)))];
 md.type = 'RRC';
 md.Tp   = 0.5e-9;
 md.beta = 0.6;
 M       = 10;         % Number of antennas
+pos_centers = pos(:, 1:M);
 paths   = 5;          % Number of paths
-N       = 15000;      % Number of sample
-Ts      = 4.6414e-12; % Sampling period
+%N       = 15000;      % Number of sample
+%Ts      = 4.6414e-12; % Sampling period
+N       = 4310;      % Number of sample
+Ts      = 2.6667e-11; % Sampling period
 tau     = (0:N-1)*Ts;
 % IR_12_rx = IR_12(:, 1:M).';
-IR_12_rx= y;
+% IR_12_rx= y;
+IR_12_rx = RL(:, 1:M).';
 IR_3    = IR_12_rx;
 IR_4    = IR_12_rx;
 A       = zeros(paths, 7);  %tau, phi_1, theta_1, phi_2, theta_2, doppler, alpha

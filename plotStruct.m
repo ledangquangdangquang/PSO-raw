@@ -1,12 +1,13 @@
-clc;clear;load('IR_12.mat');load('VA.mat');hold on;title('Điểm thu phát');grid('on');
+clc;clear;load('IR_12.mat');load('VA.mat');load('pos_gridpoint_corridor');hold on;title('Điểm thu phát');grid('on');
 %% LOCATION
 
-pos_centers = [0:0.025:(0.025*9); zeros(1,numel( 0:0.025:(0.025*9)))];
+% pos_centers = [0:0.025:(0.025*9); zeros(1,numel( 0:0.025:(0.025*9)))];
+pos_centers = pos;
 
 M = 10; % Number of antens
 startIndexAntenRx = 1;
 endIndexAntenRx = startIndexAntenRx+M-1;
-Tx = [-used_VAs{1,1}(1,1)  used_VAs{1,1}(2,1)];
+Tx = [4.18 3.99];
 %% PLOT
 plot(Tx(1), Tx(2), 'bo', 'MarkerSize', 5, 'MarkerFaceColor','r');
 plot(pos_centers(1, startIndexAntenRx:endIndexAntenRx), pos_centers(2, startIndexAntenRx:endIndexAntenRx), 'bo', 'MarkerSize', 5, 'MarkerFaceColor','b');
