@@ -4,8 +4,9 @@ function objective_value = alpha_1(u, IR_3, omega_1, theta_1, v0, tau)
     Pu = calculate_power(u);
     c_omega_1 = calculate_c_omega_1(omega_1, theta_1);
     c_norm_2 = norm(c_omega_1)^2;  
-    I = 136;
-    IPS = 1/(I * c_norm_2 * Ta * Pu);
+    % I = 211;
+    I=1;
+    IPS = 1/(I * c_norm_2 * Ta * Pu);    
     %% calculate z
     mul = conj(u) .* exp(-1j*2*pi*v0*tau) .* (c_omega_1' * IR_3);
     z = trapz(tau, mul);

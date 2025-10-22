@@ -1,9 +1,15 @@
-function XL = calculate_XL_omega_1(u, IR_12, omega_1, theta_1, alpha, v)
+function XL = calculate_XL_omega_1(u, IR_12, omega_1, theta_1, alpha, v, tau_delay)
+Ts      = 2.6667e-11;
 s = calculate_s_omega_1(u, omega_1, theta_1, alpha, v);
+tyle = max(abs(s(1,:))) / abs(IR_12(1, round(tau_delay/ Ts) + 1));
+s = s / tyle;
 XL = IR_12 - s;
 %% Log Full anten IR12 and s
 global M;
-tau1 = (0:4.6414e-12:14999*4.6414e-12);
+% tau1 = (0:4.6414e-12:14999*4.6414e-12);
+N       = 4310;      % Number of sample
+Ts      = 2.6667e-11; % Sampling period
+tau1     = (0:N-1)*Ts;
 figure;
 for i = 1:M
     subplot(ceil(M/2), 2, i);
