@@ -1,6 +1,6 @@
 load('RL_grid_corridor.mat');
 %% ----------PLOT------------
-y = RL(:,1:10).';
+y = RL(1:250,1:10).';
 M = 10;
 figure;
 for i = 1:M

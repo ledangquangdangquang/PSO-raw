@@ -1,7 +1,17 @@
 function XL = calculate_XL_omega_1(u, IR_12, omega_1, theta_1, alpha, v, tau_delay)
 Ts      = 2.6667e-11;
+idx = round(tau_delay / Ts) + 1; 
+len = size(IR_12, 2);   
+start_idx = max(1, idx - 5);
+end_idx   = min(len, idx + 5);
+for i=1:10
+    local_max(i) = max(abs(IR_12(i, start_idx:end_idx)));
+end
+% local_max = max(abs(IR_12(1, start_idx:end_idx)));
+local_max_avr = mean(local_max);
 s = calculate_s_omega_1(u, omega_1, theta_1, alpha, v);
-tyle = max(abs(s(1,:))) / abs(IR_12(1, round(tau_delay/ Ts) + 1));
+tyle = max(abs(s(1,:))) / local_max_avr;
+% tyle = 1;
 s = s / tyle;
 XL = IR_12 - s;
 %% Log Full anten IR12 and s

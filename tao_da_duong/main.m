@@ -11,7 +11,7 @@ Ts      = 2.6667e-11; % Sampling period
 tau = (0:N-1)*Ts;      % trục thời gian cố định
 
 y = zeros(10, N);
-tau_delay = linspace(tau(500), tau(4000), 5);
+tau_delay = linspace(tau(1), tau(end), 5);
 phi       = [27 64 103 149 172] * pi/180;
 alpha     = [5+3j, -1.5+0.8j, 0.6-2.4j, -3-1.2j, 1.7+4.5j];
 dopller   = 0;

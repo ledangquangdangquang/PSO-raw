@@ -4,8 +4,10 @@ num_particles = 50; % Số lượng hạt trong bầy
 num_iterations = 1000; % Số lần lặp
 
 % Chọn không gian tìm kiếm cho tau
-search_space_min = 1e-8; % Giá trị tối thiểu của tau
-search_space_max = 6e-8; % Giá trị tối đa của tau
+% search_space_min = 1e-8; % Giá trị tối thiểu của tau
+% search_space_max = 6e-8; % Giá trị tối đa của tau
+search_space_min = tau(1); % Giá trị tối thiểu của tau
+search_space_max = tau(end); % Giá trị tối đa của tau
 % Initialize particle positions within the search space
 particle_positions = rand(num_particles, 1) * (search_space_max - search_space_min) + search_space_min;
 % Initialize particle velocities (can be set randomly)
